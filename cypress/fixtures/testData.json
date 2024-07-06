@@ -1,0 +1,9 @@
+{
+    "postRequestBody": {
+      "DOB": "1974-07-28",
+      "EMAIL": "zaza.blabla@hotmail.com",
+      "FIRST_NAME": "Maria",
+      "LAST_NAME": "Lapena",
+      "INSTRUCTOR_ID": 4
+    }
+  }
