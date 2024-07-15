@@ -1,12 +1,13 @@
-import { postRequestBody } from '../../fixtures/testData.json'
+import { postRequestBody, putRequestBody } from '../../fixtures/testData.json'
 
 describe('CRUD Operations', () => {
-  after(() => {
-    cy.request({
-      method: 'DELETE',
-      url: `${Cypress.env('baseUrl')}/all/delete`,
-    })
-  })
+  // after(() => {
+  //   cy.request({
+  //     method: 'DELETE',
+  //     url: `${Cypress.env('baseUrl')}/all/delete`,
+  //   })
+  // })
+
   let studentId
 
   it('Create a new student using POST', () => {
@@ -32,6 +33,8 @@ describe('CRUD Operations', () => {
       //   LAST_NAME: 'Walsh',
       //   INSTRUCTOR_ID: 4,
       // },
+
+      // 13,000.00
     }).then((response) => {
       cy.log(response)
 
@@ -40,7 +43,7 @@ describe('CRUD Operations', () => {
       console.log(JSON.stringify(response.body, null, 6))
 
       expect(response.status).to.equal(201)
-      expect(response.duration).to.be.below(1500)
+      expect(response.duration).to.be.below(1300)
 
       cy.log(response.body['FIRST_NAME'] + ' ' + response.body.FIRST_NAME)
       expect(response.body.FIRST_NAME).to.equal(postRequestBody.FIRST_NAME)
@@ -50,6 +53,7 @@ describe('CRUD Operations', () => {
       // }
 
       // ['FIRST_NAME', 'Oran']
+
       studentId = response.body.STUDENT_ID
 
       const numbers = [1, 2, 3]
@@ -66,6 +70,7 @@ describe('CRUD Operations', () => {
       cy.validateResponse(response, postRequestBody)
     })
   })
+
   /**
    * Get the user created
    * And validate your status is 200
@@ -74,6 +79,56 @@ describe('CRUD Operations', () => {
   it('Read the creeated student using GET', () => {
     cy.request({
       method: 'GET',
+      url: `${Cypress.env('baseUrl')}/${studentId}`,
+    }).then((response) => {
+      expect(response.status).to.equal(200)
+    })
+  })
+
+  /**
+   * Create a PUT request
+   * Update the student we created
+   * Validate the status code is 2xx
+   * And console log the response
+   */
+
+  it('Update the created student using PUT', () => {
+    cy.request({
+      method: 'PUT',
+      url: `${Cypress.env('baseUrl')}/${studentId}`,
+      body: putRequestBody,
+    }).then((response) => {
+      expect(response.status).to.equal(201)
+      console.log(JSON.stringify(response.body))
+    })
+  })
+
+  /**
+   * Send a request and GET the updated user
+   * Validate its 2xx
+   * Validate the response time us under 1000ms
+   * And validate student firstname on the response is matching with your updated name
+   */
+
+  it('Get the updated student using GET', () => {
+    cy.request({
+      method: 'GET',
+      url: `${Cypress.env('baseUrl')}/${studentId}`,
+    }).then((response) => {
+      expect(response.status).to.equal(200)
+      expect(response.duration).to.be.below(1000)
+      expect(response.body.FIRST_NAME).to.equal(putRequestBody.FIRST_NAME)
+    })
+  })
+
+  /**
+   * Send a request ti DELETE the user we created
+   * Validate its 2xx
+   */
+
+  it('Delete the student using DELETE', () => {
+    cy.request({
+      method: 'DELETE',
       url: `${Cypress.env('baseUrl')}/${studentId}`,
     }).then((response) => {
       expect(response.status).to.equal(200)

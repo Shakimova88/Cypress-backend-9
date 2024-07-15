@@ -5,5 +5,14 @@
       "FIRST_NAME": "Maria",
       "LAST_NAME": "Lapena",
       "INSTRUCTOR_ID": 4
+    },
+
+    "putRequestBody": {
+      "DOB": "1974-07-28",
+      "EMAIL": "joye.blla@hotmail.com",
+      "FIRST_NAME": "Joye",
+      "LAST_NAME": "Hurvey",
+      "INSTRUCTOR_ID": 4
     }
+
   }

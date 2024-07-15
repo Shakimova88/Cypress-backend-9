@@ -2,6 +2,8 @@ const { defineConfig } = require('cypress')
 const oracledb = require('oracledb')
 require('dotenv').config()
 
+
+
 module.exports = defineConfig({
   viewportHeight: 1080,
   viewportWidth: 1920,
