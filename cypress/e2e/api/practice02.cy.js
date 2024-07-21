@@ -1,4 +1,4 @@
-describe('TechGlobal Student APIs', () => {
+describe('TechGlobal Student-Instructor API Tests', () => {
   const baseUrl = 'https://api.tech-global-training.com'
   let createdStudentId
   const uniqueEmail = `test.student.${Date.now()}@example.com`
@@ -10,19 +10,35 @@ describe('TechGlobal Student APIs', () => {
     INSTRUCTOR_ID: 1,
   }
 
-  // Task 1: Get All Students
-  it('Retrieve all students and validate the response', () => {
-    cy.request(`${baseUrl}/students`).then((response) => {
+  // Task-1: Get All Instructors
+  it('should retrieve all instructors and validate the response', () => {
+    cy.request(`${baseUrl}/instructors`).then((response) => {
       expect(response.status).to.eq(200)
-      expect(response.body.length).to.be.gte(2)
-      response.body.forEach((student) => {
-        expect(student).to.have.property('STUDENT_ID')
+      expect(response.body).to.be.an('array').that.has.length(4)
+      response.body.forEach((instructor) => {
+        expect(instructor).to.have.property('INSTRUCTOR_ID')
+        expect(instructor).to.have.property('FULLNAME')
+        expect(instructor).to.have.property('STUDENTS').and.to.be.an('array')
       })
+      const instructorIds = response.body.map((i) => i.INSTRUCTOR_ID)
+      expect(instructorIds).to.have.members([1, 2, 3, 4])
     })
   })
 
-  // Task 2: Create a New Student
-  it('Create a new student and validate the response', () => {
+  // Task-2: Get A Single Instructor
+  it('should retrieve a single instructor and validate the response', () => {
+    const instructorId = 1
+
+    cy.request(`${baseUrl}/instructors/${instructorId}`).then((response) => {
+      expect(response.status).to.eq(200)
+      expect(response.body).to.have.all.keys('INSTRUCTOR_ID', 'FULLNAME', 'STUDENTS')
+      expect(response.body.INSTRUCTOR_ID).to.eq(instructorId)
+      expect(response.body.STUDENTS).to.be.an('array')
+    })
+  })
+
+  // Task-3: Create a New Student and Validate the Instructor
+  it('should create a new student and validate its association with the instructor', () => {
     cy.request({
       method: 'POST',
       url: `${baseUrl}/students`,
@@ -42,8 +58,8 @@ describe('TechGlobal Student APIs', () => {
     })
   })
 
-  // Task 3: Get Newly Created Student
-  it('Retrieve the newly created student and validate the response', () => {
+  // Task-4: Get Newly Created Student
+  it('should retrieve the newly created student and validate the response', () => {
     cy.request(`${baseUrl}/students/${createdStudentId}`).then((response) => {
       expect(response.status).to.eq(200)
       expect(response.body.STUDENT_ID).to.eq(createdStudentId)
@@ -55,8 +71,8 @@ describe('TechGlobal Student APIs', () => {
     })
   })
 
-  // Task 4: Update Newly Created Student with a Different Instructor
-  it('Update the newly created student with a different instructor and validate the response', () => {
+  // Task-5: Update Newly Created Student with a Different Instructor
+  it('should update the newly created student with a different instructor and validate the response', () => {
     const updatedInstructorId = 2
     cy.request({
       method: 'PUT',
@@ -73,8 +89,8 @@ describe('TechGlobal Student APIs', () => {
     })
   })
 
-  // Task 5: Delete Newly Created Student
-  it('Delete the newly created student and validate the response', () => {
+  // Task-6: Delete Newly Created Student
+  it('should delete the newly created student and validate the response', () => {
     cy.request({
       method: 'DELETE',
       url: `${baseUrl}/students/${createdStudentId}`,
